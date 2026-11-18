@@ -1,0 +1,21 @@
+Mã Đơn,Tên Khách Hàng,Chi Nhánh,Ngành Hàng,Sản Phẩm,Số Lượng,Đơn Giá,Doanh Thu,Giá Vốn,KPI Mục Tiêu,Trạng Thái,Ngày Đặt
+AP-1001,Nguyễn Văn An,Hà Nội,Áo Sơ Mi,Áo Sơ Mi Oxford Cao Cấp,2,650000,1300000,650000,1200000,Hoàn thành,2026-03-01
+AP-1002,Trần Thị Mai,TP.HCM,Quần Tây,Quần Tây Slimfit Công Sở,1,750000,750000,380000,700000,Hoàn thành,2026-03-01
+AP-1003,Lê Hoàng Nam,Đà Nẵng,Phụ Kiện,Thắt Lưng Da Bò Ý,3,450000,1350000,700000,1000000,Hoàn thành,2026-03-02
+AP-1004,Phạm Quốc Bảo,Hà Nội,Áo Khoác,Áo Blazer Nam May Đo,1,1850000,1850000,1100000,1800000,Hoàn thành,2026-03-02
+AP-1005,Đỗ Thu Hà,TP.HCM,Váy Đầm,Đầm Lụa Công Sở Thanh Lịch,2,890000,1780000,900000,1500000,Hoàn trả,2026-03-03
+AP-1006,Vũ Tuấn Kiệt,Cần Thơ,Áo Thun,Áo Polo Pima Cotton,5,350000,1750000,1200000,2000000,Hoàn thành,2026-03-03
+AP-1007,Ngô Minh Tâm,Hải Phòng,Áo Sơ Mi,Áo Sơ Mi Trắng Bamboo,4,550000,2200000,1100000,2000000,Hoàn thành,2026-03-04
+AP-1008,Hoàng Yến Nhi,Hà Nội,Phụ Kiện,Khăn Lụa Vuông Họa Tiết,2,280000,560000,320000,600000,Hủy đơn,2026-03-04
+AP-1009,Đinh Trọng Đức,TP.HCM,Quần Khaki,Quần Khaki Co Giãn 4 Chiều,3,620000,1860000,950000,1800000,Hoàn thành,2026-03-05
+AP-1010,Bùi Thanh Hương,Đà Nẵng,Váy Đầm,Đầm Xòe Họa Tiết Hoa Đào,1,950000,950000,480000,1000000,Đổi trả,2026-03-05
+AP-1011,Lý Gia Huy,TP.HCM,Áo Khoác,Áo Măng Tô Dạ Cổ Điển,1,2600000,2600000,1500000,2500000,Hoàn thành,2026-03-06
+AP-1012,Trương Ngọc Ánh,Hà Nội,Áo Thun,Áo Thun Basic Cổ Tròn (Volume Trap),20,120000,2400000,2100000,2200000,Hoàn thành,2026-03-06
+AP-1013,Phan Văn Khang,Bình Dương,Áo Sơ Mi,Áo Sơ Mi Họa Tiết Kẻ Sọc,2,590000,1180000,600000,1200000,Hoàn thành,2026-03-07
+AP-1014,Cao Thùy Linh,TP.HCM,Quần Tây,Quần Tây Nữ Ống Suông,2,690000,1380000,700000,1400000,Hoàn thành,2026-03-07
+AP-1015,Tô Quang Vinh,Hà Nội,Phụ Kiện,Cà Vạt Lụa Tơ Tằm,4,320000,1280000,600000,1200000,Hoàn thành,2026-03-08
+AP-1016,Dương Thảo My,Đà Nẵng,Áo Thun,Áo Thun Basic Cổ Tròn (Volume Trap),15,120000,1800000,1600000,2000000,Hoàn thành,2026-03-08
+AP-1017,Lâm Hoài Phong,TP.HCM,Áo Sơ Mi,Áo Sơ Mi Oxford Cao Cấp,3,650000,1950000,980000,2000000,Hoàn thành,2026-03-09
+AP-1018,Mai Kim Chi,Hà Nội,Váy Đầm,Đầm Lụa Dạ Hội Cao Cấp,1,1650000,1650000,850000,1600000,Hoàn thành,2026-03-09
+AP-1019,Hồ Tấn Tài,Cần Thơ,Áo Khoác,Áo Gió Thể Thao Chống Nước,2,520000,1040000,600000,1100000,Cancel,2026-03-10
+AP-1020,Võ Thanh Tùng,TP.HCM,Quần Tây,Quần Tây Slimfit Công Sở,2,750000,1500000,760000,1500000,Hoàn thành,2026-03-10

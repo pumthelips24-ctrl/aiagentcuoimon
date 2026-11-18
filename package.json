@@ -1,0 +1,22 @@
+{
+  "name": "omnianalyst-ai-studio-sakura",
+  "version": "1.0.0",
+  "description": "OmniAnalyst AI Studio 🌸 — Sakura Edition: AI-Powered Multi-Company Business & Financial Analysis Studio",
+  "type": "module",
+  "main": "api/chat.js",
+  "scripts": {
+    "start": "python3 -m http.server 3000",
+    "dev": "python3 -m http.server 3000"
+  },
+  "keywords": [
+    "ai-agent",
+    "business-analyst",
+    "financial-analysis",
+    "vas-200",
+    "sakura-theme",
+    "fullstack",
+    "vercel-serverless"
+  ],
+  "author": "Antigravity AI Full-Stack Team",
+  "license": "MIT"
+}
