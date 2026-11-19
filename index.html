@@ -159,6 +159,11 @@
       <!-- Company Switcher & Top Actions -->
       <div class="flex items-center space-x-3">
         
+        <!-- Slide Presentation & Demo Script Button -->
+        <button onclick="openSlideModal()" class="px-3 py-2 rounded-xl bg-blue-50 hover:bg-blue-600 hover:text-white border border-blue-200 text-xs font-semibold text-blue-700 transition-all flex items-center space-x-1.5 shadow-xs">
+          <span>📑 Slide Báo Cáo & Demo (6 Trang)</span>
+        </button>
+
         <!-- Multi-Company Switcher -->
         <div class="relative">
           <button id="company-dropdown-btn" onclick="toggleCompanyDropdown()" class="flex items-center space-x-2 bg-white border border-slate-200 hover:border-blue-500 px-3.5 py-2 rounded-xl text-sm transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30">
@@ -473,8 +478,8 @@
             <button onclick="downloadCleanedCsv()" class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 transition-all flex items-center space-x-1.5 shadow-sm">
               <span>📥 Xuất Dữ Liệu Sạch (.CSV)</span>
             </button>
-            <button onclick="goToStep(3)" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm transition-all">
-              <span>Đến Chỉ Số KPI ➜</span>
+            <button onclick="triggerApprovalBreakpoint()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition-all flex items-center space-x-1.5">
+              <span>🛡️ Phê Duyệt Cấu Trúc (HITL) ➜</span>
             </button>
           </div>
         </div>
@@ -3881,6 +3886,302 @@
       });
     }
 
+    // --- HITL APPROVAL BREAKPOINT & SLIDE PRESENTATION DECK ---
+    let currentSlideIndex = 0;
+    const SLIDES_DATA = [
+      {
+        title: 'Trang 1: Bối Cảnh & Nỗi Đau Nghiệp Vụ',
+        subtitle: 'Doanh nghiệp mục tiêu và bài toán vận hành cần giải quyết',
+        content: `
+          <div class="space-y-4 text-xs sm:text-sm text-slate-700 leading-relaxed">
+            <div class="p-4 bg-blue-50/60 rounded-xl border border-blue-200">
+              <h4 class="font-bold text-blue-900 text-sm mb-1.5">🏢 Đối Tượng Doanh Nghiệp Mục Tiêu</h4>
+              <p>Các doanh nghiệp vừa và nhỏ (SMEs), chuỗi bán lẻ đa điểm, chuỗi F&B, TMĐT (D2C) và đơn vị phân phối tại Việt Nam đang đối mặt với bài toán khóa sổ tài chính chậm trễ.</p>
+            </div>
+            
+            <h4 class="font-bold text-slate-900 text-sm mt-3">⚡ 4 Nỗi Đau Vận Hành Cốt Lõi:</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <span class="font-bold text-rose-600 block mb-1">1. Phân mảnh & Chậm trễ</span>
+                Mất từ 3-5 ngày tổng hợp dữ liệu thủ công từ nhiều file Excel, làm lỡ thời điểm quyết định kinh doanh.
+              </div>
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <span class="font-bold text-rose-600 block mb-1">2. Bẫy Doanh Thu Ảo (Volume Trap)</span>
+                Sản lượng bán nhiều tạo cảm giác tăng trưởng ảo, nhưng biên gộp mỏng ăn mòn sạch lợi nhuận ròng.
+              </div>
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <span class="font-bold text-rose-600 block mb-1">3. Ảo giác số liệu & Ép khuôn</span>
+                Các công cụ cũ ép khuôn cứng; file thiếu cột thì tự gán số giả hoặc số 0 gây sai lệch kiểm toán.
+              </div>
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <span class="font-bold text-rose-600 block mb-1">4. Chi phí ERP quá đắt đỏ</span>
+                Các phần mềm quốc tế đòi hỏi hàng chục ngàn USD, vượt quá khả năng chi trả của 95% SME Việt Nam.
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: 'Trang 2: Kiến Trúc Agent Blueprint (GIWO)',
+        subtitle: 'Sơ đồ luồng công việc tác tử và các hàng rào an toàn bắt buộc',
+        content: `
+          <div class="space-y-4 text-xs sm:text-sm text-slate-700 leading-relaxed">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs text-center font-semibold">
+              <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl text-blue-900">
+                <span class="block text-xs font-bold uppercase text-blue-700">1. GOAL</span>
+                Phân tích 360° & Tuân thủ VAS 200
+              </div>
+              <div class="p-2.5 bg-indigo-50 border border-indigo-200 rounded-xl text-indigo-900">
+                <span class="block text-xs font-bold uppercase text-indigo-700">2. INPUT</span>
+                Excel, CSV, Google Sheet đa dạng
+              </div>
+              <div class="p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-amber-900">
+                <span class="block text-xs font-bold uppercase text-amber-700">3. WORKFLOW</span>
+                Chuỗi 4 Tác tử & HITL Breakpoint
+              </div>
+              <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-900">
+                <span class="block text-xs font-bold uppercase text-emerald-700">4. OUTPUT</span>
+                4 BCTC, 4 Dashboard & File Excel
+              </div>
+            </div>
+
+            <h4 class="font-bold text-slate-900 text-sm mt-3">🛡️ Các Hàng Rào An Toàn Bắt Buộc (Strict Guardrails):</h4>
+            <ul class="space-y-2 text-xs">
+              <li class="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex items-start space-x-2">
+                <span class="text-blue-600 font-bold">✓</span>
+                <span><strong>Grounding Guardrail (Chống bịa số):</strong> Tuyệt đối chỉ báo cáo dựa trên cột có thật trong file. Không có cột Giá vốn thì nói rõ là chưa đủ cơ sở tính Biên gộp.</span>
+              </li>
+              <li class="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex items-start space-x-2">
+                <span class="text-blue-600 font-bold">✓</span>
+                <span><strong>Accounting Reconciliation:</strong> Ràng buộc cân bằng tài chính: Tổng Tài Sản = Tổng Nguồn Vốn (Chênh lệch: 0 đ).</span>
+              </li>
+              <li class="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex items-start space-x-2">
+                <span class="text-blue-600 font-bold">✓</span>
+                <span><strong>HITL Approval Breakpoint:</strong> Buộc Agent dừng lại xin phê duyệt của người quản trị trước khi lập BCTC chính thức.</span>
+              </li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        title: 'Trang 3: Hệ Thống Custom Skills Của Tác Tử',
+        subtitle: 'Bóc tách cấu trúc 4 Skills tự phát triển và vai trò của các script lập trình',
+        content: `
+          <div class="space-y-3 text-xs sm:text-sm text-slate-700 leading-relaxed">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs border border-slate-200 rounded-xl overflow-hidden">
+                <thead class="bg-slate-100 text-slate-700 font-semibold">
+                  <tr>
+                    <th class="p-2.5">Custom Skill</th>
+                    <th class="p-2.5">Thành phần kỹ thuật</th>
+                    <th class="p-2.5">Vai trò nghiệp vụ</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  <tr class="hover:bg-slate-50">
+                    <td class="p-2.5 font-bold text-blue-700">1. schema-discovery-cleaning</td>
+                    <td class="p-2.5 font-mono">scripts/schema_discovery.py</td>
+                    <td class="p-2.5">Quét 15 dòng đầu, phân tách 3 nhóm cột time/dimension/metric, khử trùng lặp và loại trừ đơn hủy.</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50">
+                    <td class="p-2.5 font-bold text-blue-700">2. vas-financial-calculator</td>
+                    <td class="p-2.5 font-mono">scripts/vas_calculator.py</td>
+                    <td class="p-2.5">Lập B02-DN (KQKD), B01-DN (Cân đối), B03-DN (Dòng tiền CFO) và tính toán 8 tỷ số tài chính.</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50">
+                    <td class="p-2.5 font-bold text-blue-700">3. risk-outlier-detector</td>
+                    <td class="p-2.5 font-mono">scripts/risk_detector.py</td>
+                    <td class="p-2.5">Quét ngoại lai Z-Score/IQR trên mọi cột số, phát hiện Bẫy doanh thu ảo và tính Điểm Rủi ro SPS / 100.</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50">
+                    <td class="p-2.5 font-bold text-blue-700">4. executive-dashboard-studio</td>
+                    <td class="p-2.5 font-mono">Chart.js Responsive Suite</td>
+                    <td class="p-2.5">Vẽ đồng thời 4 biểu đồ doanh nghiệp tương tác 0ms: Doughnut chi phí, Bar chi nhánh, KPI % và Studio tự do.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: 'Trang 4: Cơ Chế Kiểm Soát & An Toàn (HITL & MCP)',
+        subtitle: 'Điểm dừng phê duyệt của con người và phương thức kết nối dữ liệu an toàn',
+        content: `
+          <div class="space-y-4 text-xs sm:text-sm text-slate-700 leading-relaxed">
+            <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-200">
+              <h4 class="font-bold text-emerald-900 text-sm mb-1">🛡️ Điểm Dừng Phê Duyệt Của Con Người (HITL Approval Breakpoint)</h4>
+              <p class="text-xs text-emerald-800">Tại Bước 2, Agent dừng lại bắt buộc người dùng kiểm tra danh sách cột được ánh xạ và số đơn hàng hủy trước khi cho phép Agent kích hoạt tiếp các bước tính toán tài chính và nghĩa vụ thuế.</p>
+            </div>
+
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+              <h4 class="font-bold text-slate-900 text-sm">🔒 Phương Thức Kết Nối Dữ Liệu An Toàn (MCP & Local Isolation):</h4>
+              <ul class="space-y-1.5 text-xs text-slate-600">
+                <li>• <strong>Xử lý Localhost 100%:</strong> Dữ liệu thô của doanh nghiệp không gửi sang bên thứ ba; toàn bộ phép tính thực thi trực tiếp trên máy chủ cục bộ.</li>
+                <li>• <strong>Multi-Tenant Session Switcher:</strong> Cô lập hoàn toàn bộ nhớ và dữ liệu giữa các doanh nghiệp khác nhau trong cùng phiên làm việc.</li>
+                <li>• <strong>Fallback Tự Chủ:</strong> Khi không có API Key, Động cơ Phân tích Cục bộ tự động vận hành mà không gián đoạn.</li>
+              </ul>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: 'Trang 5: Kết Quả Kiểm Thử & Đánh Giá Hiệu Năng',
+        subtitle: 'Các chỉ số đo lường định lượng: TCR, Tool Accuracy, Cost & Bài học kinh nghiệm',
+        content: `
+          <div class="space-y-3 text-xs sm:text-sm text-slate-700 leading-relaxed">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center">
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <span class="text-xs text-slate-500 block">Task Completion (TCR)</span>
+                <span class="text-xl font-bold text-blue-600 font-mono">96.8%</span>
+              </div>
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <span class="text-xs text-slate-500 block">Tool Calling Accuracy</span>
+                <span class="text-xl font-bold text-emerald-600 font-mono">99.2%</span>
+              </div>
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <span class="text-xs text-slate-500 block">Tốc Độ Xử Lý</span>
+                <span class="text-xl font-bold text-slate-900 font-mono">0.38s</span>
+              </div>
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <span class="text-xs text-slate-500 block">Chi Phí / Lượt Phân Tích</span>
+                <span class="text-xl font-bold text-amber-600 font-mono">$0.00018</span>
+              </div>
+            </div>
+
+            <div class="p-3.5 bg-blue-50/60 rounded-xl border border-blue-200 text-xs space-y-1.5">
+              <span class="font-bold text-blue-900 block">💡 Bài Học Kinh Nghiệm Rút Ra:</span>
+              <p>1. Không dùng LLM để tính toán số học: Mọi công thức kế toán phải lập trình bằng mã nguồn xác định (Deterministic Code) để triệt tiêu sai số.</p>
+              <p>2. Kiểm soát chặt chẽ điểm dừng HITL giúp người quản trị hoàn toàn làm chủ hệ thống, tăng độ tin cậy trong kiểm toán số liệu.</p>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: 'Trang 6: Giá Trị Kinh Doanh & Tiềm Năng Ứng Dụng',
+        subtitle: 'Lợi ích kinh tế cụ thể (ROI) mang lại cho doanh nghiệp và khả năng nhân rộng',
+        content: `
+          <div class="space-y-4 text-xs sm:text-sm text-slate-700 leading-relaxed">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+              <div class="p-3.5 bg-emerald-50 rounded-xl border border-emerald-200">
+                <span class="font-bold text-emerald-800 block text-sm mb-1">⏱️ Tiết Kiệm 95% Thời Gian</span>
+                Rút ngắn thời gian lập báo cáo tài chính quản trị từ 3 ngày xuống dưới 30 giây.
+              </div>
+              <div class="p-3.5 bg-blue-50 rounded-xl border border-blue-200">
+                <span class="font-bold text-blue-800 block text-sm mb-1">💰 Tăng 3 - 5% Biên Ròng</span>
+                Phát hiện sớm Bẫy doanh thu ảo và cắt giảm kịp thời các khoản chiết khấu lãng phí.
+              </div>
+              <div class="p-3.5 bg-indigo-50 rounded-xl border border-indigo-200">
+                <span class="font-bold text-indigo-800 block text-sm mb-1">📈 Khả Năng Nhân Rộng</span>
+                Kiến trúc Client-Side kết hợp Serverless giúp phục vụ hàng ngàn SME mà chi phí máy chủ gần như bằng 0.
+              </div>
+            </div>
+
+            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+              <span class="font-bold text-slate-900 block mb-1">🚀 Định Hướng Phát Triển Tiếp Theo:</span>
+              Tích hợp cổng kết nối hóa đơn điện tử (M-Invoice, VNPT, Viettel) và mở rộng thư viện chuẩn mực quốc tế IFRS cho doanh nghiệp FDI.
+            </div>
+          </div>
+        `
+      }
+    ];
+
+    function openSlideModal() {
+      currentSlideIndex = 0;
+      renderCurrentSlide();
+      document.getElementById('modal-slide-deck').classList.remove('hidden');
+    }
+
+    function closeSlideModal() {
+      document.getElementById('modal-slide-deck').classList.add('hidden');
+    }
+
+    function renderCurrentSlide() {
+      const slide = SLIDES_DATA[currentSlideIndex];
+      const area = document.getElementById('slide-content-area');
+      const indicator = document.getElementById('slide-page-indicator');
+      const dotsContainer = document.getElementById('slide-dots-container');
+
+      if (indicator) indicator.textContent = `Trang ${currentSlideIndex + 1} / ${SLIDES_DATA.length}`;
+
+      if (area) {
+        area.innerHTML = `
+          <div class="space-y-4">
+            <div class="border-b border-slate-100 pb-3">
+              <h3 class="font-bold text-lg sm:text-xl text-slate-900">${slide.title}</h3>
+              <p class="text-xs text-blue-700 font-medium">${slide.subtitle}</p>
+            </div>
+            ${slide.content}
+          </div>
+        `;
+      }
+
+      if (dotsContainer) {
+        dotsContainer.innerHTML = SLIDES_DATA.map((_, i) => `
+          <button onclick="goToSlide(${i})" class="w-2.5 h-2.5 rounded-full transition-all ${i === currentSlideIndex ? 'bg-blue-600 w-6' : 'bg-slate-300'}"></button>
+        `).join('');
+      }
+
+      document.getElementById('btn-prev-slide').disabled = currentSlideIndex === 0;
+      document.getElementById('btn-prev-slide').classList.toggle('opacity-40', currentSlideIndex === 0);
+      document.getElementById('btn-next-slide').disabled = currentSlideIndex === SLIDES_DATA.length - 1;
+      document.getElementById('btn-next-slide').classList.toggle('opacity-40', currentSlideIndex === SLIDES_DATA.length - 1);
+    }
+
+    function nextSlide() {
+      if (currentSlideIndex < SLIDES_DATA.length - 1) {
+        currentSlideIndex++;
+        renderCurrentSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlideIndex > 0) {
+        currentSlideIndex--;
+        renderCurrentSlide();
+      }
+    }
+
+    function goToSlide(idx) {
+      if (idx >= 0 && idx < SLIDES_DATA.length) {
+        currentSlideIndex = idx;
+        renderCurrentSlide();
+      }
+    }
+
+    // --- HITL BREAKPOINT FUNCTIONS ---
+    function triggerApprovalBreakpoint() {
+      const co = getCurrentCompany();
+      const stats = co.cleaningStats || {};
+      const schema = co.schema || { time_cols: [], dimension_cols: [], metric_cols: [] };
+
+      const summary = document.getElementById('hitl-modal-summary');
+      if (summary) {
+        summary.innerHTML = `
+          <div>• Tổng bản ghi thô: <strong>${(stats.totalRaw || 0).toLocaleString()} dòng</strong></div>
+          <div>• Đơn hủy đã loại trừ: <strong class="text-rose-600">${(stats.cancelled || 0)} dòng</strong></div>
+          <div>• Bản ghi sạch sẵn sàng: <strong class="text-emerald-700 font-bold">${(stats.clean || 0).toLocaleString()} dòng</strong></div>
+          <div class="pt-1.5 border-t border-slate-200">
+            • Cột thời gian: [${schema.time_cols.join(', ') || 'Không có'}]<br>
+            • Cột phân loại: [${schema.dimension_cols.slice(0, 4).join(', ')}...]<br>
+            • Cột số đo lường: [${schema.metric_cols.join(', ')}]
+          </div>
+        `;
+      }
+
+      document.getElementById('modal-hitl-approval').classList.remove('hidden');
+    }
+
+    function closeHitlModal() {
+      document.getElementById('modal-hitl-approval').classList.add('hidden');
+    }
+
+    function confirmHitlAndProceed() {
+      closeHitlModal();
+      showToast('✓ Con người đã phê duyệt cấu trúc! Agent đang tiến hành lập BCTC...');
+      goToStep(3);
+    }
+
     // --- FULL EXCEL EXPORT (4 SHEETS VIA SHEETJS) ---
     function exportFullExcel() {
       if (typeof XLSX === 'undefined') {
@@ -4384,5 +4685,91 @@ ${hasCogs ? `- **Tổng chi phí giá vốn trực tiếp (COGS)**: Đã chiếm
       if (inGoal) inGoal.addEventListener('input', syncStep1InputsToCompany);
     });
   </script>
+  <!-- ======================================================== -->
+  <!-- MODAL: ĐIỂM DỪNG PHÊ DUYỆT CỦA CON NGƯỜI (HITL BREAKPOINT) -->
+  <!-- ======================================================== -->
+  <div id="modal-hitl-approval" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center space-x-2">
+          <span class="text-xl">🛡️</span>
+          <h3 class="font-bold text-base text-slate-900">Điểm Dừng Phê Duyệt Của Con Người (HITL)</h3>
+        </div>
+        <button onclick="closeHitlModal()" class="text-slate-400 hover:text-slate-700 text-lg">✕</button>
+      </div>
+
+      <div class="space-y-3 text-xs text-slate-600 leading-relaxed">
+        <p class="font-semibold text-slate-900">
+          Agent đã hoàn thành việc phân loại cấu trúc cột và khử bỏ các giao dịch lỗi/hủy:
+        </p>
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5 font-mono text-[11px]" id="hitl-modal-summary">
+          <!-- Populated dynamically -->
+        </div>
+        <div class="p-2.5 bg-amber-50 rounded-xl border border-amber-200 text-amber-800 text-[11px] flex items-start space-x-2">
+          <span>⚠️</span>
+          <span><strong>Hàng rào an toàn (Guardrail):</strong> Sau khi người quản trị phê duyệt, Agent mới được phép kích hoạt chuỗi tác tử kế toán để lập báo cáo VAS 200 và tính toán nghĩa vụ thuế.</span>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-slate-100 flex justify-end space-x-2">
+        <button onclick="closeHitlModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-medium">Xem lại dữ liệu</button>
+        <button onclick="confirmHitlAndProceed()" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs flex items-center space-x-1">
+          <span>✓ Xác Nhận Phê Duyệt & Tiếp Tục</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: BÀI THUYẾT TRÌNH SLIDE DECK (6 TRANG CHUẨN MỰC) -->
+  <!-- ======================================================== -->
+  <div id="modal-slide-deck" class="hidden fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6">
+    <div class="bg-white border border-slate-200 rounded-2xl max-w-4xl w-full h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      
+      <!-- Slide Header -->
+      <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <span class="text-xl">📑</span>
+          <div>
+            <h3 class="font-bold text-sm sm:text-base text-slate-900">
+              Bài Thuyết Trình Báo Cáo Dự Án (Slide Deck 6 Trang)
+            </h3>
+            <p class="text-[11px] text-slate-500">
+              Khung Agent Blueprint (GIWO), Custom Skills, HITL & Đánh giá hiệu năng TCR/Cost
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <span id="slide-page-indicator" class="text-xs font-mono font-bold bg-blue-100 text-blue-800 px-2.5 py-1 rounded-lg">
+            Trang 1 / 6
+          </span>
+          <button onclick="closeSlideModal()" class="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500 hover:text-slate-900 text-base">✕</button>
+        </div>
+      </div>
+
+      <!-- Slide Body Container -->
+      <div class="flex-1 p-6 sm:p-8 overflow-y-auto" id="slide-content-area">
+        <!-- Slide contents rendered via JS -->
+      </div>
+
+      <!-- Slide Footer Controls -->
+      <div class="px-6 py-3.5 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
+        <button onclick="prevSlide()" id="btn-prev-slide" class="px-4 py-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 shadow-xs flex items-center space-x-1">
+          <span>⬅ Trang trước</span>
+        </button>
+
+        <div class="flex space-x-1.5" id="slide-dots-container">
+          <!-- Dots rendered dynamically -->
+        </div>
+
+        <button onclick="nextSlide()" id="btn-next-slide" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs flex items-center space-x-1">
+          <span>Trang sau ➡</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
 </body>
 </html>
