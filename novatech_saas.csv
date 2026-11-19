@@ -1,0 +1,13 @@
+Mã Đơn,Tên Khách Hàng,Chi Nhánh,Ngành Hàng,Sản Phẩm,Số Lượng,Đơn Giá,Doanh Thu,Giá Vốn,KPI Mục Tiêu,Trạng Thái,Ngày Đặt
+NVT-501,Tập Đoàn Bất Động Sản Hưng Vượng,VP Miền Bắc,Gói Enterprise,NovaERP Cloud License (1 Năm),1,240000000,240000000,48000000,220000000,Hoàn thành,2026-03-01
+NVT-502,Công Ty Cổ Phần Logistics Á Châu,VP Miền Nam,Gói Professional,NovaCRM Team License (1 Năm),1,72000000,72000000,15000000,70000000,Hoàn thành,2026-03-01
+NVT-503,Chuỗi Bán Lẻ WinMart Mart,VP Miền Bắc,Tích Hợp API,Gói Kết Nối Open API & Webhook,1,35000000,35000000,5000000,40000000,Hoàn thành,2026-03-02
+NVT-504,Ngân Hàng Số VPDirect,VP Miền Nam,Gói Enterprise,NovaSecurity AI Shield Add-on,1,120000000,120000000,20000000,100000000,Hoàn thành,2026-03-02
+NVT-505,Start-up EduTech VuiHoc,VP Miền Bắc,Gói Starter,NovaWork Starter Pack (Tháng),12,2500000,30000000,24000000,35000000,Hoàn thành,2026-03-03
+NVT-506,Công Ty TNHH May Mặc Tân Bình,VP Miền Nam,Tư Vấn Setup,Dịch Vụ Đào Tạo Triển Khai On-premise,1,45000000,45000000,18000000,50000000,Đổi trả,2026-03-03
+NVT-507,Bệnh Viện Đa Khoa Tâm Trí,VP Miền Nam,Gói Enterprise,NovaHospital HIS Integration,1,180000000,180000000,36000000,170000000,Hoàn thành,2026-03-04
+NVT-508,Công Ty CP Truyền Thông VMG,VP Miền Bắc,Gói Starter,NovaWork Starter Pack (Tháng),6,2500000,15000000,14000000,20000000,Hoàn thành,2026-03-04
+NVT-509,Tập Đoàn Hóa Chất Đức Giang,VP Miền Bắc,Gói Enterprise,NovaERP Cloud License (1 Năm),1,240000000,240000000,48000000,240000000,Hoàn thành,2026-03-05
+NVT-510,Fintech SmartPay,VP Miền Nam,Tích Hợp API,Custom SLA 24/7 Dedicated Support,1,60000000,60000000,12000000,60000000,Hủy đơn,2026-03-05
+NVT-511,Công Ty Cơ Khí Toàn Thắng,VP Miền Bắc,Gói Professional,NovaCRM Team License (1 Năm),1,72000000,72000000,15000000,75000000,Hoàn thành,2026-03-06
+NVT-512,Hệ Thống Nhà Thuốc PharmaCity,VP Miền Nam,Gói Enterprise,NovaERP Cloud Enterprise Plus,1,320000000,320000000,60000000,300000000,Hoàn thành,2026-03-06

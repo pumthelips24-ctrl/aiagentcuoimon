@@ -1,0 +1,17 @@
+Mã Đơn,Tên Khách Hàng,Chi Nhánh,Ngành Hàng,Sản Phẩm,Số Lượng,Đơn Giá,Doanh Thu,Giá Vốn,KPI Mục Tiêu,Trạng Thái,Ngày Đặt
+HL-0101,Bàn 01 - Trực tiếp,Chi Nhánh 1 (Quận 1),Cà Phê,Phin Sữa Đá Cỡ Lớn,4,39000,156000,48000,150000,Hoàn thành,2026-03-01
+HL-0102,Bàn 05 - Trực tiếp,Chi Nhánh 1 (Quận 1),Freeze,Freeze Trà Xanh Thạch,3,59000,177000,55000,180000,Hoàn thành,2026-03-01
+HL-0103,Take Away 02,Chi Nhánh 2 (Thủ Đức),Trà,Trà Sen Vàng Kem Cheese,5,49000,245000,75000,220000,Hoàn thành,2026-03-01
+HL-0104,GrabFood 14,Chi Nhánh 1 (Quận 1),Bánh Ngọt,Bánh Mousse Cacao Bỉ,2,35000,70000,22000,80000,Hoàn thành,2026-03-02
+HL-0105,ShopeeFood 08,Chi Nhánh 2 (Thủ Đức),Cà Phê,Phin Đen Đá Đậm Vị,6,29000,174000,45000,200000,Hoàn thành,2026-03-02
+HL-0106,Bàn 12 - Trực tiếp,Chi Nhánh 2 (Thủ Đức),Freeze,Freeze Sô-cô-la Hạnh Nhân,4,65000,260000,90000,250000,Đổi trả,2026-03-02
+HL-0107,Take Away 07,Chi Nhánh 1 (Quận 1),Trà,Trà Thạch Đào Highland,4,45000,180000,50000,180000,Hoàn thành,2026-03-03
+HL-0108,GrabFood 29,Chi Nhánh 2 (Thủ Đức),Bánh Mì,Bánh Mì Gà Xé Nước Tương,5,25000,125000,75000,150000,Hoàn thành,2026-03-03
+HL-0109,Bàn 04 - Trực tiếp,Chi Nhánh 1 (Quận 1),Combo,Combo Cà Phê & Bánh Chuối,3,55000,165000,52000,160000,Hoàn thành,2026-03-04
+HL-0110,ShopeeFood 19,Chi Nhánh 1 (Quận 1),Trà,Trà Sen Vàng Kem Cheese,8,49000,392000,120000,350000,Hoàn thành,2026-03-04
+HL-0111,Bàn 09 - Trực tiếp,Chi Nhánh 2 (Thủ Đức),Bánh Ngọt,Bánh Phô Mai Chanh Dây,4,39000,156000,50000,180000,Hủy đơn,2026-03-05
+HL-0112,Take Away 15,Chi Nhánh 2 (Thủ Đức),Cà Phê,Cà Phê Bạc Xỉu Sài Gòn,12,35000,420000,130000,400000,Hoàn thành,2026-03-05
+HL-0113,Bàn 03 - Trực tiếp,Chi Nhánh 1 (Quận 1),Freeze,Freeze Caramel Phin Kem,3,65000,195000,68000,200000,Hoàn thành,2026-03-06
+HL-0114,GrabFood 45,Chi Nhánh 1 (Quận 1),Trà,Trà Xanh Đậu Đỏ,4,45000,180000,52000,180000,Hoàn thành,2026-03-06
+HL-0115,ShopeeFood 33,Chi Nhánh 2 (Thủ Đức),Combo,Combo Bữa Sáng Năng Lượng,15,45000,675000,480000,700000,Hoàn thành,2026-03-07
+HL-0116,Bàn 08 - Trực tiếp,Chi Nhánh 1 (Quận 1),Cà Phê,Espresso Đậm Vị,2,35000,70000,20000,80000,Hoàn thành,2026-03-07
