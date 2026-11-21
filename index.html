@@ -386,7 +386,7 @@
             <!-- Drag & Drop Zone -->
             <div id="drop-zone" onclick="triggerFileInput(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" class="border-2 border-dashed border-slate-300 hover:border-blue-500 rounded-2xl p-8 sm:p-12 text-center cursor-pointer transition-all bg-slate-50/70 hover:bg-blue-50/40 relative group">
               
-              <input type="file" id="file-input" accept=".xlsx,.xls,.csv,.json" class="hidden" onchange="handleFileSelect(event)">
+              <input type="file" id="file-input" accept=".xlsx,.xls,.csv,.json" class="hidden" onclick="event.stopPropagation()" onchange="handleFileSelect(event)">
               
               <!-- Idle State Visual -->
               <div id="drop-zone-idle" class="space-y-3">
@@ -2084,6 +2084,7 @@
     }
 
     function triggerFileInput(e) {
+      if (e && e.target && e.target.id === 'file-input') return;
       if (e) e.stopPropagation();
       const fileInput = document.getElementById('file-input');
       if (fileInput) fileInput.click();
@@ -2117,6 +2118,7 @@
       if (files && files.length > 0) {
         processUploadedFile(files[0]);
       }
+      if (e && e.target) e.target.value = '';
     }
 
     function resetDropzoneUI() {
@@ -2444,7 +2446,7 @@
         return null;
       }
 
-      const orderIdCol = findSemanticCol(['madon', 'orderid', 'code', 'id', 'invoice', 'sohd', 'maso']);
+      const orderIdCol = findSemanticCol(['madon', 'madonhang', 'orderid', 'order_id', 'code', 'sodon', 'stt', 'machungtu', 'ma_chung_tu', 'id', 'invoice', 'sohd', 'maso']);
       const statusCol = findSemanticCol(['trangthai', 'status', 'tinhtrang', 'state']);
       const revCol = findSemanticCol(['doanhthu', 'revenue', 'thanhtien', 'amount', 'sales', 'tongtien', 'total', 'thucthu']);
       const cogsCol = findSemanticCol(['giavon', 'cogs', 'cost', 'costofgoods', 'gianhap', 'chiphitructiep']);
@@ -2585,7 +2587,6 @@
       const productCol = findSemanticCol(['sanpham', 'product', 'item', 'mathang', 'hanghoa', 'dichvu', 'service']);
       const qtyCol = findSemanticCol(['soluong', 'qty', 'quantity', 'sl']);
       const customerCol = findSemanticCol(['khachhang', 'customer', 'client', 'nguoimua', 'doitac', 'tenkhach', 'buyer']);
-      const orderIdCol = findSemanticCol(['madon', 'madonhang', 'orderid', 'order_id', 'code', 'sodon', 'stt', 'machungtu', 'ma_chung_tu']);
 
       const branchesMap = {};
       const productsMap = {};
