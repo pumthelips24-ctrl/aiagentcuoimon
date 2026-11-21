@@ -753,7 +753,7 @@ class EnterpriseRequestHandler(SimpleHTTPRequestHandler):
         raw_key = body.get('apiKey', '') or os.environ.get('GEMINI_API_KEY', '')
         parsed_api = parse_gemini_api_input(raw_key)
         active_key = parsed_api['key']
-        active_model = body.get('model') or parsed_api['model'] or os.environ.get('GEMINI_MODEL', 'gemini-1.5-flash')
+        active_model = body.get('model') or parsed_api['model'] or os.environ.get('GEMINI_MODEL', 'gemini-3.8-flash')
         provider = body.get('provider', 'gemini')
 
         company_name = company.get('name', 'Doanh Nghiệp')

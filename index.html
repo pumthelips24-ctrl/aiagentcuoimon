@@ -5050,10 +5050,13 @@ ${fullContext}
 2. SỐ LIỆU CHÍNH XÁC TUYỆT ĐỐI 100%: Dùng chính xác số liệu có trong các bảng được cung cấp ở trên. KHÔNG TỰ BỊA ĐẶT HOẶC ÉP SỐ LIỆU.
 3. Sau dòng trả lời trực tiếp, hãy phân tích nhanh nguyên nhân và đề xuất hành động chiến lược thiết thực cho Ban Giám Đốc.`;
 
+          // Ưu tiên các model theo khuyến nghị mới nhất từ Google AI Studio: gemini-3.8-flash, gemini-2.5-flash
           let candidateModels = [activeGeminiModel];
+          if (!candidateModels.includes('gemini-3.8-flash')) candidateModels.unshift('gemini-3.8-flash');
           if (!candidateModels.includes('gemini-2.5-flash')) candidateModels.push('gemini-2.5-flash');
           if (!candidateModels.includes('gemini-2.0-flash')) candidateModels.push('gemini-2.0-flash');
           if (!candidateModels.includes('gemini-1.5-flash')) candidateModels.push('gemini-1.5-flash');
+          candidateModels = candidateModels.filter((v, i, a) => v && a.indexOf(v) === i);
 
           let res = null;
           for (const m of candidateModels) {
@@ -5066,7 +5069,7 @@ ${fullContext}
                 },
                 body: JSON.stringify({
                   contents: [{ role: 'user', parts: [{ text: sysPrompt + '\n\n[CÂU HỎI CỦA NGƯỜI DÙNG]: ' + message }] }],
-                  generationConfig: { temperature: 0.3, maxOutputTokens: 1800 }
+                  generationConfig: { maxOutputTokens: 2048 }
                 })
               });
               if (res.ok) break;
@@ -5980,8 +5983,8 @@ ${fullContext}
       if (testBtn) testBtn.disabled = true;
 
       try {
-        // Thử các mô hình theo chuẩn mới nhất: gemini-2.5-flash, gemini-2.0-flash, gemini-1.5-flash
-        const modelsToTest = [parsed.model, 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'].filter((v, i, a) => v && a.indexOf(v) === i);
+        // Thử các mô hình theo chuẩn mới nhất: gemini-3.8-flash, gemini-2.5-flash, gemini-2.0-flash, gemini-1.5-flash
+        const modelsToTest = ['gemini-3.8-flash', 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash', parsed.model].filter((v, i, a) => v && a.indexOf(v) === i);
         let testRes = null;
         let successfulModel = parsed.model;
         let lastErrText = '';
