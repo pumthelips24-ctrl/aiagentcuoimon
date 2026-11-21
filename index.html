@@ -1527,7 +1527,9 @@
         <div>
           <label class="block font-semibold text-slate-700 uppercase mb-1">Mô Hình & Nhà Cung Cấp</label>
           <select id="api-provider-select" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 text-xs focus:outline-none focus:border-blue-600">
-            <option value="gemini">Google Gemini API (1.5 Flash / 2.0 Flash - Tự động nhận diện)</option>
+            <option value="gemini-3.8-flash">Google Gemini 3.8 Flash (Khuyên dùng - Siêu tốc & Thông minh nhất)</option>
+            <option value="gemini-2.5-flash">Google Gemini 2.5 Flash</option>
+            <option value="gemini">Google Gemini API (Tự động nhận diện)</option>
             <option value="openai">OpenAI API (GPT-4o-mini)</option>
             <option value="local-engine">Động Cơ Phân Tích Chuyên Sâu Cục Bộ (Tích hợp sẵn 0ms)</option>
           </select>
@@ -1536,9 +1538,9 @@
         <div>
           <label class="block font-semibold text-slate-700 uppercase mb-1">API Key hoặc Link API Google AI Studio</label>
           <div class="space-y-1.5">
-            <input type="text" id="api-key-input" placeholder="Dán API Key (AIzaSy...) hoặc toàn bộ link API tại đây..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 text-xs focus:outline-none focus:border-blue-600">
+            <input type="text" id="api-key-input" placeholder="Dán API Key (AQ... hoặc AIza...) hoặc link API tại đây..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 text-xs focus:outline-none focus:border-blue-600">
             <p class="text-[11px] text-slate-500">
-              💡 Hỗ trợ: Dán trực tiếp <b>API Key</b> (<code>AIza...</code>) hoặc toàn bộ <b>Link API / cURL</b> từ Google AI Studio. Hệ thống sẽ tự động bóc tách mã khóa và mô hình chuẩn xác.
+              💡 Hỗ trợ đầy đủ: Khóa mới <b><code>AQ...</code></b>, khóa cũ <b><code>AIza...</code></b>, hoặc toàn bộ <b>Link API / cURL</b> từ Google AI Studio.
             </p>
           </div>
         </div>
@@ -5915,7 +5917,15 @@ ${fullContext}
 
     // --- API SETTINGS & CONNECTION TEST ENGINE ---
     function openApiSettingsModal() {
-      document.getElementById('api-provider-select').value = APP_STATE.apiSettings.provider || 'gemini';
+      const currentProvider = APP_STATE.apiSettings.model || APP_STATE.apiSettings.provider || 'gemini-3.8-flash';
+      const selectElem = document.getElementById('api-provider-select');
+      if (selectElem) {
+        if (['gemini-3.8-flash', 'gemini-2.5-flash', 'gemini', 'openai', 'local-engine'].includes(currentProvider)) {
+          selectElem.value = currentProvider;
+        } else {
+          selectElem.value = 'gemini-3.8-flash';
+        }
+      }
       document.getElementById('api-key-input').value = APP_STATE.apiSettings.apiKey || '';
       const statusDiv = document.getElementById('api-test-status');
       if (statusDiv) {
@@ -5930,12 +5940,18 @@ ${fullContext}
     }
 
     function saveApiSettings() {
-      APP_STATE.apiSettings.provider = document.getElementById('api-provider-select').value;
+      const selectedVal = document.getElementById('api-provider-select').value;
+      if (selectedVal.startsWith('gemini')) {
+        APP_STATE.apiSettings.provider = 'gemini';
+        APP_STATE.apiSettings.model = selectedVal === 'gemini' ? 'gemini-3.8-flash' : selectedVal;
+      } else {
+        APP_STATE.apiSettings.provider = selectedVal;
+      }
       const rawInput = document.getElementById('api-key-input').value.trim();
       const parsed = parseGeminiApiInput(rawInput);
       const cleanKey = parsed.key || rawInput;
       APP_STATE.apiSettings.apiKey = cleanKey;
-      if (parsed.model) APP_STATE.apiSettings.model = parsed.model;
+      if (parsed.model && selectedVal === 'gemini') APP_STATE.apiSettings.model = parsed.model;
       localStorage.setItem('omni_studio_api_key', cleanKey);
       
       const fastInput = document.getElementById('chat-fast-api-key');
@@ -5943,7 +5959,7 @@ ${fullContext}
       
       closeApiSettingsModal();
       if (cleanKey && (cleanKey.startsWith('AIza') || cleanKey.startsWith('AQ.') || cleanKey.length >= 25)) {
-        showToast('✅ Đã lưu và kích hoạt Google Gemini API (' + (parsed.model || '1.5 Flash') + ')!');
+        showToast('✅ Đã lưu và kích hoạt ' + (APP_STATE.apiSettings.model || 'Gemini 3.8 Flash') + '!');
       } else {
         showToast('✅ Đã lưu cấu hình AI thành công!');
       }
