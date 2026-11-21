@@ -4863,12 +4863,19 @@
         key = s.replace(/^Bearer\s+/i, '').trim();
       }
 
-      if (!key || !key.startsWith('AIza')) {
-        const aizaMatch = s.match(/(AIza[0-9A-Za-z-_]{30,45})/);
-        if (aizaMatch) key = aizaMatch[1];
+      // Key có thể bắt đầu bằng AIza... (chuẩn cũ) hoặc AQ... (chuẩn Auth Key mới của Google AI Studio) hoặc chuỗi token hợp lệ
+      if (!key) {
+        const keyMatch = s.match(/(AIza[0-9A-Za-z-_]{30,45}|AQ\.[0-9A-Za-z-_]{35,65})/);
+        if (keyMatch) key = keyMatch[1];
       }
 
-      if (key && key.startsWith('AIza')) key = key.trim();
+      // Nếu key có độ dài hợp lệ (>25 ký tự) và không chứa khoảng trắng, chấp nhận làm API key
+      if (key) {
+        key = key.trim();
+      } else if (s.length >= 25 && /^[A-Za-z0-9_\-\.]{25,85}$/.test(s)) {
+        key = s;
+      }
+
       return { key, model, endpoint };
     }
 
@@ -4885,7 +4892,7 @@
       const fastInput = document.getElementById('chat-fast-api-key');
       if (fastInput && cleanKey && fastInput.value !== cleanKey) fastInput.value = cleanKey;
       
-      if (cleanKey && cleanKey.startsWith('AIza')) {
+      if (cleanKey && (cleanKey.startsWith('AIza') || cleanKey.startsWith('AQ.') || cleanKey.length >= 25)) {
         showToast('✅ Đã nhận diện Google Gemini API (' + (parsed.model || '1.5 Flash') + ') thành công!');
       } else if (cleanKey) {
         showToast('⚠️ Đã lưu API Key: ' + cleanKey.slice(0, 10) + '...');
@@ -5026,7 +5033,7 @@ ${prodsStr}
       const fullContext = buildFullAuditContextStr(company, financials);
 
       // 1. Nếu có Gemini API Key, gọi TRỰC TIẾP Google Gemini (Hoạt động cả trên file:// lẫn localhost lẫn Vercel)
-      if (activeGeminiKey && activeGeminiKey.startsWith('AIza')) {
+      if (activeGeminiKey && (activeGeminiKey.startsWith('AIza') || activeGeminiKey.startsWith('AQ.') || activeGeminiKey.length >= 25)) {
         try {
           const sysPrompt = `Bạn là ${roleTitle} thuộc Nền tảng Phân tích Dữ liệu & Quản trị Tài chính Doanh nghiệp (OmniAnalyst Studio).
 
@@ -5928,7 +5935,7 @@ ${fullContext}
       if (fastInput) fastInput.value = cleanKey;
       
       closeApiSettingsModal();
-      if (cleanKey && cleanKey.startsWith('AIza')) {
+      if (cleanKey && (cleanKey.startsWith('AIza') || cleanKey.startsWith('AQ.') || cleanKey.length >= 25)) {
         showToast('✅ Đã lưu và kích hoạt Google Gemini API (' + (parsed.model || '1.5 Flash') + ')!');
       } else {
         showToast('✅ Đã lưu cấu hình AI thành công!');
@@ -5951,9 +5958,9 @@ ${fullContext}
       }
 
       const parsed = parseGeminiApiInput(inputVal);
-      if (!parsed.key || !parsed.key.startsWith('AIza')) {
+      if (!parsed.key || (!parsed.key.startsWith('AIza') && !parsed.key.startsWith('AQ.') && parsed.key.length < 25)) {
         statusDiv.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-800');
-        statusDiv.innerHTML = '❌ <b>Khóa API không hợp lệ</b>. Khóa API Google Gemini bắt buộc phải bắt đầu bằng <code>AIza...</code>.<br><span class="text-[11px] text-slate-500">Mẹo: Bạn có thể dán toàn bộ đường link API hoặc lệnh cURL từ Google AI Studio, hệ thống sẽ tự động bóc tách.</span>';
+        statusDiv.innerHTML = '❌ <b>Khóa API không hợp lệ</b>. Khóa API Google Gemini thường bắt đầu bằng <code>AIza...</code> hoặc <code>AQ....</code> (chuẩn mới từ Google AI Studio).<br><span class="text-[11px] text-slate-500">Mẹo: Bạn có thể dán toàn bộ đường link API hoặc lệnh cURL từ Google AI Studio, hệ thống sẽ tự động bóc tách.</span>';
         statusDiv.classList.remove('hidden');
         return;
       }
@@ -5990,7 +5997,11 @@ ${fullContext}
             errText = testRes.statusText;
           }
           statusDiv.className = 'p-3 rounded-xl border text-xs bg-rose-50 border-rose-200 text-rose-800';
-          statusDiv.innerHTML = `❌ <b>Google API trả về mã lỗi (${testRes.status})</b>: ${errText}<br><span class="text-[11px] text-slate-600">Đừng lo! Hệ thống sẽ tự động sử dụng Động cơ phân tích chuyên sâu tích hợp sẵn để trả lời đầy đủ số liệu.</span>`;
+          let guideText = '';
+          if (errText.includes('not allowed by policy')) {
+            guideText = '<div class="mt-1 text-[11px] text-amber-900 bg-amber-50 p-2 rounded-lg border border-amber-200">⚠️ <b>Nguyên nhân lỗi policy</b>: Khóa <code>AQ...</code> này đang bị hạn chế quyền trong Google Cloud Console hoặc bật sai API restriction.<br>👉 <b>Cách khắc phục ngay</b>: Truy cập <a href="https://aistudio.google.com/app/apikey" target="_blank" class="underline font-bold text-blue-700">Google AI Studio</a>, bấm <b>"Create API key in new project"</b> để tạo một khóa mới hoàn toàn không bị hạn chế policy!</div>';
+          }
+          statusDiv.innerHTML = `❌ <b>Google API trả về mã lỗi (${testRes.status})</b>: ${errText}${guideText}<br><span class="text-[11px] text-slate-600">Hệ thống sẽ tự động sử dụng Động cơ phân tích chuyên sâu tích hợp sẵn để trả lời đầy đủ số liệu cho bạn.</span>`;
         }
       } catch (err) {
         statusDiv.className = 'p-3 rounded-xl border text-xs bg-rose-50 border-rose-200 text-rose-800';

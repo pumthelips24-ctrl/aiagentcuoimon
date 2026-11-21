@@ -46,7 +46,13 @@ export default async function handler(req, res) {
     const activeGeminiKey = parsedApi.key;
     const activeGeminiModel = model || parsedApi.model || process.env.GEMINI_MODEL || 'gemini-1.5-flash';
 
-    if (activeGeminiKey && activeGeminiKey.startsWith('AIza') && provider === 'gemini') {
+    const isValidGeminiKey = activeGeminiKey && (
+      activeGeminiKey.startsWith('AIza') ||
+      activeGeminiKey.startsWith('AQ.') ||
+      activeGeminiKey.length >= 25
+    );
+
+    if (isValidGeminiKey && provider === 'gemini') {
       try {
         const sysPrompt = `Bạn là ${roleTitle} thuộc Nền tảng Phân tích Dữ liệu & Quản trị Tài chính Doanh nghiệp (OmniAnalyst Studio).
 
@@ -168,12 +174,12 @@ function parseGeminiApiInput(rawInput) {
     key = s.replace(/^Bearer\s+/i, '').trim();
   }
 
-  if (!key || !key.startsWith('AIza')) {
-    const aizaMatch = s.match(/(AIza[0-9A-Za-z-_]{30,45})/);
+  if (!key || (!key.startsWith('AIza') && !key.startsWith('AQ.'))) {
+    const aizaMatch = s.match(/(AIza[0-9A-Za-z-_]{30,45}|AQ\.[0-9A-Za-z-_]{35,65})/);
     if (aizaMatch) key = aizaMatch[1];
   }
 
-  if (key && key.startsWith('AIza')) key = key.trim();
+  if (key) key = key.trim();
   return { key, model, endpoint };
 }
 

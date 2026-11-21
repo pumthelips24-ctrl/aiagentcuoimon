@@ -703,12 +703,12 @@ def parse_gemini_api_input(raw_input):
     if not key:
         key = re.sub(r'^Bearer\s+', '', s, flags=re.IGNORECASE).strip()
 
-    if not key or not key.startswith('AIza'):
-        aiza_match = re.search(r'(AIza[0-9A-Za-z-_]{30,45})', s)
+    if not key or (not key.startswith('AIza') and not key.startswith('AQ.')):
+        aiza_match = re.search(r'(AIza[0-9A-Za-z-_]{30,45}|AQ\.[0-9A-Za-z-_]{35,65})', s)
         if aiza_match:
             key = aiza_match.group(1)
 
-    if key and key.startswith('AIza'):
+    if key:
         key = key.strip()
     return {'key': key, 'model': model, 'endpoint': endpoint}
 
@@ -761,7 +761,8 @@ class EnterpriseRequestHandler(SimpleHTTPRequestHandler):
         char_title = 'Quốc Bảo (Kế toán Trưởng & Giám đốc Tài chính CFO)' if is_quoc_bao else 'Minh Anh (Cố vấn Chiến lược & Vận hành Doanh nghiệp)'
 
         # Thử gọi Gemini API trực tiếp từ Server nếu có API Key
-        if active_key and active_key.startswith('AIza') and provider == 'gemini':
+        is_valid_key = active_key and (active_key.startswith('AIza') or active_key.startswith('AQ.') or len(active_key) >= 25)
+        if is_valid_key and provider == 'gemini':
             try:
                 full_context = build_full_audit_context(company, financial_data)
                 sys_prompt = f"""Bạn là {char_title} thuộc Nền tảng Phân tích Dữ liệu & Quản trị Tài chính Doanh nghiệp (OmniAnalyst Studio).
