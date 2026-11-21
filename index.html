@@ -5050,25 +5050,26 @@ ${fullContext}
 2. SỐ LIỆU CHÍNH XÁC TUYỆT ĐỐI 100%: Dùng chính xác số liệu có trong các bảng được cung cấp ở trên. KHÔNG TỰ BỊA ĐẶT HOẶC ÉP SỐ LIỆU.
 3. Sau dòng trả lời trực tiếp, hãy phân tích nhanh nguyên nhân và đề xuất hành động chiến lược thiết thực cho Ban Giám Đốc.`;
 
-          let res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${activeGeminiModel}:generateContent?key=${activeGeminiKey}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ role: 'user', parts: [{ text: sysPrompt + '\n\n[CÂU HỎI CỦA NGƯỜI DÙNG]: ' + message }] }],
-              generationConfig: { temperature: 0.3, maxOutputTokens: 1800 }
-            })
-          });
+          let candidateModels = [activeGeminiModel];
+          if (!candidateModels.includes('gemini-1.5-flash')) candidateModels.push('gemini-1.5-flash');
+          if (!candidateModels.includes('gemini-2.0-flash')) candidateModels.push('gemini-2.0-flash');
+          if (!candidateModels.includes('gemini-1.5-pro')) candidateModels.push('gemini-1.5-pro');
 
-          // Nếu model lỗi (e.g. 404), tự động thử fallback sang gemini-1.5-flash
-          if (!res.ok && activeGeminiModel !== 'gemini-1.5-flash') {
-            res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${activeGeminiKey}`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: [{ role: 'user', parts: [{ text: sysPrompt + '\n\n[CÂU HỎI CỦA NGƯỜI DÙNG]: ' + message }] }],
-                generationConfig: { temperature: 0.3, maxOutputTokens: 1800 }
-              })
-            });
+          let res = null;
+          for (const m of candidateModels) {
+            try {
+              res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${activeGeminiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  contents: [{ role: 'user', parts: [{ text: sysPrompt + '\n\n[CÂU HỎI CỦA NGƯỜI DÙNG]: ' + message }] }],
+                  generationConfig: { temperature: 0.3, maxOutputTokens: 1800 }
+                })
+              });
+              if (res.ok) break;
+            } catch (err) {
+              console.warn(`Thử model ${m} không thành công:`, err);
+            }
           }
 
           if (res.ok) {
@@ -5976,32 +5977,50 @@ ${fullContext}
       if (testBtn) testBtn.disabled = true;
 
       try {
-        const testRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${parsed.model}:generateContent?key=${parsed.key}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: 'Trả lời đúng 1 chữ: OK' }] }],
-            generationConfig: { maxOutputTokens: 10 }
-          })
-        });
+        const modelsToTest = [parsed.model, 'gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro'].filter((v, i, a) => v && a.indexOf(v) === i);
+        let testRes = null;
+        let successfulModel = parsed.model;
+        let lastErrText = '';
 
-        if (testRes.ok) {
-          statusDiv.className = 'p-3 rounded-xl border text-xs bg-emerald-50 border-emerald-200 text-emerald-800';
-          statusDiv.innerHTML = `✅ <b>Kết nối Google Gemini API thành công!</b><br>Khóa hợp lệ (<code>${parsed.key.slice(0, 10)}...</code>) | Mô hình: <b>${parsed.model}</b>.<br>Trợ lý AI đã sẵn sàng đọc hiểu toàn bộ bảng số liệu và trả lời trực tiếp câu hỏi của bạn!`;
-        } else {
-          let errText = '';
+        for (const m of modelsToTest) {
           try {
-            const errData = await testRes.json();
-            errText = errData.error?.message || testRes.statusText;
+            testRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${parsed.key}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: 'Trả lời đúng 1 chữ: OK' }] }],
+                generationConfig: { maxOutputTokens: 10 }
+              })
+            });
+            if (testRes.ok) {
+              successfulModel = m;
+              break;
+            } else {
+              try {
+                const errData = await testRes.json();
+                lastErrText = errData.error?.message || testRes.statusText;
+              } catch(e) {
+                lastErrText = testRes.statusText;
+              }
+            }
           } catch(e) {
-            errText = testRes.statusText;
+            lastErrText = e.message;
           }
+        }
+
+        if (testRes && testRes.ok) {
+          statusDiv.className = 'p-3 rounded-xl border text-xs bg-emerald-50 border-emerald-200 text-emerald-800';
+          statusDiv.innerHTML = `✅ <b>Kết nối Google Gemini API thành công!</b><br>Khóa hợp lệ (<code>${parsed.key.slice(0, 10)}...</code>) | Mô hình đã chọn: <b>${successfulModel}</b>.<br>Trợ lý AI đã sẵn sàng đọc hiểu toàn bộ bảng số liệu và trả lời trực tiếp câu hỏi của bạn!`;
+        } else {
+          let errText = lastErrText || 'Không xác định';
           statusDiv.className = 'p-3 rounded-xl border text-xs bg-rose-50 border-rose-200 text-rose-800';
           let guideText = '';
           if (errText.includes('not allowed by policy')) {
             guideText = '<div class="mt-1 text-[11px] text-amber-900 bg-amber-50 p-2 rounded-lg border border-amber-200">⚠️ <b>Nguyên nhân lỗi policy</b>: Khóa <code>AQ...</code> này đang bị hạn chế quyền trong Google Cloud Console hoặc bật sai API restriction.<br>👉 <b>Cách khắc phục ngay</b>: Truy cập <a href="https://aistudio.google.com/app/apikey" target="_blank" class="underline font-bold text-blue-700">Google AI Studio</a>, bấm <b>"Create API key in new project"</b> để tạo một khóa mới hoàn toàn không bị hạn chế policy!</div>';
+          } else if (errText.includes('is not found for API version') || errText.includes('404')) {
+            guideText = '<div class="mt-1 text-[11px] text-amber-900 bg-amber-50 p-2 rounded-lg border border-amber-200">⚠️ <b>Nguyên nhân lỗi 404</b>: Khóa API này chưa được kích hoạt dịch vụ <b>Generative Language API</b> hoặc đang trỏ vào project bị hạn chế quyền gọi mô hình trong Google AI Studio.<br>👉 <b>Cách khắc phục ngay</b>: Vào <a href="https://aistudio.google.com/app/apikey" target="_blank" class="underline font-bold text-blue-700">Google AI Studio</a>, chọn <b>"Create API key in new project"</b> (Tạo khóa trong dự án mới) để tạo một khóa có quyền truy cập đầy đủ các mô hình Gemini!</div>';
           }
-          statusDiv.innerHTML = `❌ <b>Google API trả về mã lỗi (${testRes.status})</b>: ${errText}${guideText}<br><span class="text-[11px] text-slate-600">Hệ thống sẽ tự động sử dụng Động cơ phân tích chuyên sâu tích hợp sẵn để trả lời đầy đủ số liệu cho bạn.</span>`;
+          statusDiv.innerHTML = `❌ <b>Google API trả về mã lỗi (${testRes ? testRes.status : '404'})</b>: ${errText}${guideText}<br><span class="text-[11px] text-slate-600">Hệ thống sẽ tự động sử dụng Động cơ phân tích chuyên sâu tích hợp sẵn để trả lời đầy đủ số liệu cho bạn.</span>`;
         }
       } catch (err) {
         statusDiv.className = 'p-3 rounded-xl border text-xs bg-rose-50 border-rose-200 text-rose-800';

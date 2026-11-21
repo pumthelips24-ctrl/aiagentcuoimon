@@ -69,41 +69,35 @@ ${fullContext}
 2. SỐ LIỆU CHÍNH XÁC TUYỆT ĐỐI 100%: Dùng chính xác số liệu có trong các bảng được cung cấp ở trên. KHÔNG BỊA ĐẶT SỐ LIỆU.
 3. Sau dòng trả lời trực tiếp, hãy phân tích nhanh nguyên nhân và đề xuất hành động chiến lược thiết thực cho Ban Giám Đốc.`;
 
-        let geminiRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${activeGeminiModel}:generateContent?key=${activeGeminiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [
-                {
-                  role: 'user',
-                  parts: [{ text: sysPrompt + '\n\n[CÂU HỎI CỦA NGƯỜI DÙNG]: ' + message }]
-                }
-              ],
-              generationConfig: {
-                temperature: 0.3,
-                maxOutputTokens: 1800
-              }
-            })
-          }
-        );
+        const candidateModels = [activeGeminiModel, 'gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro'].filter((v, i, a) => v && a.indexOf(v) === i);
+        let geminiRes = null;
 
-        // Fallback to gemini-1.5-flash if custom/extracted model returns error
-        if (!geminiRes.ok && activeGeminiModel !== 'gemini-1.5-flash') {
-          geminiRes = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${activeGeminiKey}`,
-            {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: [
-                  {
-                    role: 'user',
-                    parts: [{ text: sysPrompt + '\n\n[CÂU HỎI CỦA NGƯỜI DÙNG]: ' + message }]
+        for (const m of candidateModels) {
+          try {
+            geminiRes = await fetch(
+              `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${activeGeminiKey}`,
+              {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  contents: [
+                    {
+                      role: 'user',
+                      parts: [{ text: sysPrompt + '\n\n[CÂU HỎI CỦA NGƯỜI DÙNG]: ' + message }]
+                    }
+                  ],
+                  generationConfig: {
+                    temperature: 0.3,
+                    maxOutputTokens: 1800
                   }
-                ],
-                generationConfig: {
+                })
+              }
+            );
+            if (geminiRes.ok) break;
+          } catch (e) {
+            console.warn(`[Vercel API] Model ${m} fetch error:`, e);
+          }
+        }
                   temperature: 0.3,
                   maxOutputTokens: 1800
                 }
