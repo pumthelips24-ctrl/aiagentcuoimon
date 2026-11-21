@@ -69,7 +69,7 @@ ${fullContext}
 2. SỐ LIỆU CHÍNH XÁC TUYỆT ĐỐI 100%: Dùng chính xác số liệu có trong các bảng được cung cấp ở trên. KHÔNG BỊA ĐẶT SỐ LIỆU.
 3. Sau dòng trả lời trực tiếp, hãy phân tích nhanh nguyên nhân và đề xuất hành động chiến lược thiết thực cho Ban Giám Đốc.`;
 
-        const candidateModels = [activeGeminiModel, 'gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro'].filter((v, i, a) => v && a.indexOf(v) === i);
+        const candidateModels = [activeGeminiModel, 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'].filter((v, i, a) => v && a.indexOf(v) === i);
         let geminiRes = null;
 
         for (const m of candidateModels) {
@@ -78,7 +78,10 @@ ${fullContext}
               `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${activeGeminiKey}`,
               {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                  'Content-Type': 'application/json',
+                  'x-goog-api-key': activeGeminiKey
+                },
                 body: JSON.stringify({
                   contents: [
                     {

@@ -5051,16 +5051,19 @@ ${fullContext}
 3. Sau dòng trả lời trực tiếp, hãy phân tích nhanh nguyên nhân và đề xuất hành động chiến lược thiết thực cho Ban Giám Đốc.`;
 
           let candidateModels = [activeGeminiModel];
-          if (!candidateModels.includes('gemini-1.5-flash')) candidateModels.push('gemini-1.5-flash');
+          if (!candidateModels.includes('gemini-2.5-flash')) candidateModels.push('gemini-2.5-flash');
           if (!candidateModels.includes('gemini-2.0-flash')) candidateModels.push('gemini-2.0-flash');
-          if (!candidateModels.includes('gemini-1.5-pro')) candidateModels.push('gemini-1.5-pro');
+          if (!candidateModels.includes('gemini-1.5-flash')) candidateModels.push('gemini-1.5-flash');
 
           let res = null;
           for (const m of candidateModels) {
             try {
               res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${activeGeminiKey}`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                  'Content-Type': 'application/json',
+                  'x-goog-api-key': activeGeminiKey
+                },
                 body: JSON.stringify({
                   contents: [{ role: 'user', parts: [{ text: sysPrompt + '\n\n[CÂU HỎI CỦA NGƯỜI DÙNG]: ' + message }] }],
                   generationConfig: { temperature: 0.3, maxOutputTokens: 1800 }
@@ -5977,19 +5980,24 @@ ${fullContext}
       if (testBtn) testBtn.disabled = true;
 
       try {
-        const modelsToTest = [parsed.model, 'gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro'].filter((v, i, a) => v && a.indexOf(v) === i);
+        // Thử các mô hình theo chuẩn mới nhất: gemini-2.5-flash, gemini-2.0-flash, gemini-1.5-flash
+        const modelsToTest = [parsed.model, 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'].filter((v, i, a) => v && a.indexOf(v) === i);
         let testRes = null;
         let successfulModel = parsed.model;
         let lastErrText = '';
 
         for (const m of modelsToTest) {
           try {
+            // Hỗ trợ cả x-goog-api-key header và URL key param để tương thích chuẩn mới
             testRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${parsed.key}`, {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 
+                'Content-Type': 'application/json',
+                'x-goog-api-key': parsed.key
+              },
               body: JSON.stringify({
-                contents: [{ parts: [{ text: 'Trả lời đúng 1 chữ: OK' }] }],
-                generationConfig: { maxOutputTokens: 10 }
+                contents: [{ parts: [{ text: '1+1=' }] }],
+                generationConfig: { maxOutputTokens: 5 }
               })
             });
             if (testRes.ok) {
